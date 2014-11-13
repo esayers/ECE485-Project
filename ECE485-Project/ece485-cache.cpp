@@ -26,7 +26,7 @@ Cache_set::Cache_set(unsigned int assoc)
 {
 	this->assoc = assoc;
 	lines = new Cache_line * [assoc];
-	for (unsigned int i = 0; i < assoc; ++i) lines[i] = NULL;
+	for (unsigned int i = 0; i < assoc; ++i) lines[i] = NULL; // Assign null to each pointer in array
 }
 
 // Destructor for cache set
@@ -51,7 +51,7 @@ Cache::Cache(unsigned int total_size, unsigned int line_size, unsigned int assoc
 	assoc = (1 << assoc_pow);
 	num_sets = (1 << index_bits);
 	sets = new Cache_set *[num_sets];
-	for (unsigned int i = 0; i < num_sets; ++i) sets[i] = NULL;
+	for (unsigned int i = 0; i < num_sets; ++i) sets[i] = NULL; // Assign null to each pointer in array
 }
 
 // Destructor for cache
