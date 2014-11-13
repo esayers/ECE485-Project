@@ -20,12 +20,10 @@ class Cache_line;
 class Cache_line {
 
 	Mesif_state state;              	// MESIF state of line
-	unsigned int byte_bits;				// Number of bits used for byte offset
-	unsigned int index_bits;			// Number of bits used for index
 	unsigned int tag;					// Current tag
 
 public:
-	Cache_line(unsigned int, unsigned int);
+	Cache_line(void);
 	friend class Cache;
 	friend class Cache_set;
 };
@@ -34,13 +32,11 @@ public:
 class Cache_set {
 
 	unsigned int assoc;			// Set associativity
-	unsigned int byte_bits;		// Number of bits used for byte offset
-	unsigned int index_bits;	// Number of bits used for index
 	unsigned int lru_state;		// LRU state bits
 	Cache_line ** lines;		// Array of pointers to cache lines
 
 public:
-	Cache_set(unsigned int, unsigned int, unsigned int);
+	Cache_set(unsigned int);
 	~Cache_set();
 	friend class Cache;
 };

@@ -10,13 +10,10 @@ using namespace std;
 //
 
 // Constructor for cache line
-// INPUT:	index_bits, Number of bits used for the index
-//			byte_bits, Number of bits used for the byte offset
-Cache_line::Cache_line(unsigned int index_bits, unsigned int byte_bits)
+Cache_line::Cache_line(void)
 {
-	this->index_bits = index_bits;
-	this->byte_bits = byte_bits;
     state = MESIF_INVALID;
+	tag = -1;
 }
 
 //
@@ -27,11 +24,9 @@ Cache_line::Cache_line(unsigned int index_bits, unsigned int byte_bits)
 // INPUT:	assoc, Associativity of set
 //			index_bits, number of bits used for index
 //			byte_bits, number of bits used for byte offset
-Cache_set::Cache_set(unsigned int assoc, unsigned int index_bits, unsigned int byte_bits)
+Cache_set::Cache_set(unsigned int assoc)
 {
 	this->assoc = assoc;
-	this->index_bits = index_bits;
-	this->byte_bits = byte_bits;
 	lines = new Cache_line * [assoc];
 }
 
@@ -68,7 +63,7 @@ Cache::~Cache()
 
 int Cache::test(void)
 {
-	sets[0] = new Cache_set(assoc, index_bits, byte_bits);
-	sets[0]->lines[0] = new Cache_line(index_bits, byte_bits);
+	sets[0] = new Cache_set(assoc);
+	sets[0]->lines[0] = new Cache_line();
 	return 0;
 }
