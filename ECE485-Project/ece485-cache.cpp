@@ -33,7 +33,10 @@ Cache_set::Cache_set(unsigned int assoc)
 // Destructor for cache set
 Cache_set::~Cache_set(void)
 {
-	for (unsigned int i = 0; i < assoc; ++i) delete lines[i];
+	for (unsigned int i = 0; i < assoc; ++i)
+	{
+		delete lines[i];
+	};
 	delete[] lines;
 }
 
