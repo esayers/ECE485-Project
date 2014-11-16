@@ -19,8 +19,8 @@ class Cache_line;
 // Single cache line
 class Cache_line {
 
-	Mesif_state state;              	// MESIF state of line
-	unsigned int tag;					// Current tag
+	Mesif_state state;			// MESIF state of line
+	unsigned int tag;			// Current tag
 
 public:
 	Cache_line(void);
