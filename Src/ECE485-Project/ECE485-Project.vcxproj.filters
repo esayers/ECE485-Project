@@ -21,9 +21,36 @@
     <ClCompile Include="ece485-main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AddressUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cacheController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cacheLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cacheSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ece485-cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CacheConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AddressUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cacheController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cacheLine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cacheSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,36 +5,7 @@
 #include "ece485-cache.h"
 using namespace std;
 
-//
-// Cache line
-//
 
-// Constructor for cache line
-Cache_line::Cache_line(void)
-{
-    state = MESIF_INVALID;
-	tag = -1;
-}
-
-//
-// Cache Set
-//
-
-// Constructor for cache set
-// INPUT:	assoc, Associativity of set
-Cache_set::Cache_set(unsigned int assoc)
-{
-	this->assoc = assoc;
-	lines = new Cache_line * [assoc];
-	for (unsigned int i = 0; i < assoc; ++i) lines[i] = NULL;
-}
-
-// Destructor for cache set
-Cache_set::~Cache_set(void)
-{
-	for (unsigned int i = 0; i < assoc; ++i) delete lines[i];
-	delete[] lines;
-}
 
 //
 // Cache
@@ -44,14 +15,23 @@ Cache_set::~Cache_set(void)
 // INPUT:	total_size, log base 2 of total size of cache
 //			line_size, log base 2 of size of one line
 //			assoc_pow, log base 2 of associativity of cache
-Cache::Cache(unsigned int total_size, unsigned int line_size, unsigned int assoc_pow)
+Cache::Cache(unsigned int total_size, unsigned int line_size, unsigned int assoc)
 {
-	byte_bits = line_size;
-	index_bits = total_size - line_size - assoc_pow;
-	assoc = (1 << assoc_pow);
-	num_sets = (1 << index_bits);
+	LineSizeBytes = line_size;
+	ByteSelectLength = (int)(log10(line_size) / log10(2));
+	
+	TagLength = (int)(32 - (log10(total_size / assoc) / log10(2)));
+	IndexLength = TagLength - ByteSelectLength;
+	assoc = assoc;
+	num_sets = (1 << IndexLength);
 	sets = new Cache_set *[num_sets];
 	for (unsigned int i = 0; i < num_sets; ++i) sets[i] = NULL;
+
+	//intialize all statistics
+	CacheHits = 0;
+	CacheMisses = 0;
+	CacheReads = 0;
+	CacheWrites = 0;
 }
 
 // Destructor for cache
@@ -61,9 +41,45 @@ Cache::~Cache()
 	delete[] sets;
 }
 
+
+Cache_line* Cache::LookupCacheLine(unsigned int address)
+{
+	CacheReads++;
+	Cache_set RsltSet = *sets[AddressUtils::GetIndex(TagLength, IndexLength, address)];
+
+	Cache_line *RsltLine = NULL;
+	if (&RsltSet == NULL)
+		CacheMisses++;
+	else
+	{
+		RsltLine = RsltSet.LookUpCacheLine(AddressUtils::GetTag(TagLength, address));
+		if (RsltLine == NULL)
+			CacheMisses++;
+		else
+		{
+			if (RsltLine->State == MESIF_INVALID)
+				CacheMisses++;
+			else
+				CacheHits++;
+		}
+			
+	}
+
+	return RsltLine;
+
+}
+
+//Place the line in cache and evicts a line if necessary.  Returns "true" if a line needed to be evicted and was in the modified state
+bool Cache::PlaceLineInCache(unsigned int address, Mesif_state mesifStatus)
+{
+	CacheWrites++;
+}
+
+/*
 int Cache::test(void)
 {
 	sets[0] = new Cache_set(assoc);
 	sets[0]->lines[0] = new Cache_line();
 	return 0;
 }
+*/

@@ -76,10 +76,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AddressUtils.cpp" />
+    <ClCompile Include="cacheController.cpp" />
+    <ClCompile Include="cacheLine.cpp" />
+    <ClCompile Include="cacheSet.cpp" />
     <ClCompile Include="ece485-cache.cpp" />
     <ClCompile Include="ece485-main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddressUtils.h" />
+    <ClInclude Include="CacheConstants.h" />
+    <ClInclude Include="cacheController.h" />
+    <ClInclude Include="cacheLine.h" />
+    <ClInclude Include="cacheSet.h" />
     <ClInclude Include="ece485-cache.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
