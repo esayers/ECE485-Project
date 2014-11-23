@@ -17,7 +17,7 @@ public:
 private:
 	void ReadRequestFromL1Cache(unsigned int);
 	void WriteRequestFromL1Cache(unsigned int);
-	bool ReadfromL2Cache(unsigned int);
+	bool ReadfromL2Cache(unsigned int, bool Rwim);
 	void SnoopInvalidate(unsigned int);
 	void SnoopRead(unsigned int);
 	void SnoopWrite(unsigned int);
@@ -25,7 +25,7 @@ private:
 
 	//Required functions
 	snoopOperationType GetSnoopResult(unsigned int);
-	snoopOperationType BusOperation(busOperationType, unsigned int);
+	void BusOperation(busOperationType, unsigned int);
 	void PutSnoopResult(snoopOperationType, unsigned int);
 	void MessageToL2Cache(busOperationType, unsigned int);
 };

@@ -23,16 +23,22 @@ void CacheController::PerformCacheOp(int traceOp, unsigned int address)
 	{
 	case 1:
 		ReadRequestFromL1Cache(address);
+		break;
 	case 2:
 		WriteRequestFromL1Cache(address);
+		break;
 	case 3:
 		SnoopInvalidate(address);
+		break;
 	case 4:
 		SnoopRead(address);
+		break;
 	case 5:
 		SnoopWrite(address);
+		break;
 	case 6:
 		SnoopRwo(address);
+		break;
 	}
 }
 
@@ -66,7 +72,7 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 	//If no line was returned, or if the line was returned and is marked invalid, read from the higher cache
 	if (CacheRslt == NULL || (CacheRslt != NULL && CacheRslt->State == MESIF_INVALID))
 	{
-		if (ReadfromL2Cache(address))
+		if (ReadfromL2Cache(address,false))
 		{
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
 				BusOperation(WRITE, address);
@@ -82,17 +88,33 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 //Handles a write request from the L1 cache
 void CacheController::WriteRequestFromL1Cache(unsigned int address)
 {
+	
+	Cache_line* LineRslt = MainCache->LookupCacheLine(address);
+
+	if (LineRslt == NULL)
+	{
+		ReadfromL2Cache(address, true);
+		if(MainCache->PlaceLineInCache(address, MESIF_MODIFIED))
+			BusOperation(WRITE,address);
+
+	}
+	else
+	{
+		BusOperation(INVALIDATE, address);
+		LineRslt->State = MESIF_MODIFIED;
+	}
+
 
 }
 
 //Handles a read from the higher cache. Returns true if snoop was successful, false if not
-	bool CacheController::ReadfromL2Cache(unsigned int address)
+	bool CacheController::ReadfromL2Cache(unsigned int address, bool Rwim)
 	{
 		snoopOperationType SnoopRslt = GetSnoopResult(address);
 
 		if (SnoopRslt == NOHIT)
 		{
-			BusOperation(READ, address);
+			BusOperation(Rwim?RWIM:READ, address);
 			return false;
 		}
 
@@ -125,19 +147,34 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			switch (lineRslt->State)
 			{
 			case MESIF_INVALID:
-					PutSnoopResult(NOHIT, address);
+			
+				PutSnoopResult(NOHIT, address);
+				break;
+			
 			case MESIF_EXCLUSIVE:
+			{
 				PutSnoopResult(HIT, address);
 				lineRslt->State = MESIF_SHARED;
+				
+			}
+			break;
 			case MESIF_FORWARD:
+			{
 				PutSnoopResult(HIT, address);
 				lineRslt->State = MESIF_SHARED;
+				
+			}
+			break;
 			case MESIF_MODIFIED:
+			{
 				BusOperation(WRITE, address);
 				PutSnoopResult(HITM, address);
 				lineRslt->State = MESIF_SHARED;
+				
+			}
+			break;
 			default:
-
+				break;
 
 			}
 
@@ -159,7 +196,39 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 
 	void CacheController::SnoopRwo(unsigned int address)
 	{
+		Cache_line* lineRslt = MainCache->LookupCacheLine(address);
 
+		if (lineRslt == NULL)
+
+			PutSnoopResult(NOHIT, address);
+		else
+		{
+			switch (lineRslt->State)
+			{
+			case MESIF_INVALID:
+				PutSnoopResult(NOHIT, address);
+				break;
+			case MESIF_EXCLUSIVE:
+			case MESIF_FORWARD:
+			case MESIF_SHARED:
+			{
+				PutSnoopResult(HIT, address);
+				lineRslt->State = MESIF_INVALID;
+			}
+				break;
+			case MESIF_MODIFIED:
+			{
+				BusOperation(WRITE, address);
+				PutSnoopResult(HITM, address);
+				lineRslt->State = MESIF_INVALID;
+			}
+				break;
+			default:
+				break;
+
+			}
+
+		}
 	}
 
 	//Required functions
@@ -175,14 +244,17 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 		{
 		case 0:
 			return NOHIT;
+			break;
 		case 1:
 			return HIT;
+			break;
 		case 2:
 			return HITM;
+			break;
 		}
 	}
 
-	snoopOperationType CacheController::BusOperation(busOperationType busOp, unsigned int address)
+	void CacheController::BusOperation(busOperationType busOp, unsigned int address)
 	{
 
 	}

@@ -47,11 +47,12 @@ int main(int argc, char *argv[])
 
 
 		}
+
+		traceFile.close();
 	}
 
 	//Print summary
-
-	//Cleanup
+	MainCacheController.PrintStats();
 
 	return 0;
 }

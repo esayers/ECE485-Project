@@ -10,7 +10,7 @@ class Cache_set;
 class Cache_set {
 
 	unsigned int assoc;			// Set associativity
-	unsigned int lru_state;		// LRU state bits
+	bool* lru_state;		// LRU state array
 	Cache_line ** lines;		// Array of pointers to cache lines
 
 public:
