@@ -8,9 +8,9 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 	//Array sizes
-	int associativity = 6;
+	int associativity = 16;
 	int lineSizeBytes = 64;
-	int totalSizeBytes = 8192;
+	int totalSizeBytes = 8388608;
 
 	
 	//initialize arrays
@@ -39,10 +39,13 @@ int main(int argc, char *argv[])
 			{
 			case 8:
 				MainCacheController.ClearCache();
+				break;
 			case 9:
 				MainCacheController.PrintStats();
+				break;
 			default:
 				MainCacheController.PerformCacheOp(traceOp, address);
+				break;
 			}
 
 
