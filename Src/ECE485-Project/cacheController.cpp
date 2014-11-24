@@ -74,12 +74,15 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 	{
 		if (ReadfromL2Cache(address,false))
 		{
-			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
+			if (MainCache->PlaceLineInCache(address, MESIF_FORWARD))
 				BusOperation(WRITE, address);
 
 		}
 		else
-			MainCache->PlaceLineInCache(address, MESIF_FORWARD);
+			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
+			{
+				BusOperation(WRITE, address);
+			}
 
 	}
 	
