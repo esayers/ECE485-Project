@@ -24,7 +24,7 @@ int AddressUtils::GetIndex(int tagLength, int byteSelectLength, unsigned int add
 	unsigned int mask = ~0;
 
 	//shift the bits to the left for the appropriate amount of times, filling the spaces with 0s
-		mask = mask << (32 - tagLength - byteSelectLength);
+		mask = mask << (sizeof(address) - tagLength - byteSelectLength);
 
 	//do an AND operation with the complement of the mask, so the 0s are 1s and the 1s are 0s, blocking
 	//any of the higher order bits and allowing the index bits to come through
@@ -34,5 +34,5 @@ int AddressUtils::GetIndex(int tagLength, int byteSelectLength, unsigned int add
 
 unsigned int AddressUtils::GetTag(int tagLength, unsigned int address)
 {
-	return address >> (32-tagLength);
+	return address >> (sizeof(address) - tagLength);
 }
