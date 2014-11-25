@@ -31,7 +31,7 @@ Cache_set::~Cache_set(void)
 //Looks up cache line based on the tag and returns the cache line object, null if no tag matches.
 Cache_line* Cache_set::LookUpCacheLine(unsigned int tag)
 {
-		for (unsigned int i = 0; i < assoc; i++)
+	for (unsigned int i = 0; i < assoc; i++)
 	{
 		Cache_line* LineRslt = lines[assoc];
 		if (LineRslt != NULL && LineRslt->Tag == tag)
@@ -39,9 +39,8 @@ Cache_line* Cache_set::LookUpCacheLine(unsigned int tag)
 			UpdateLru(i, 0, assoc-2);
 			return LineRslt;
 		}
-		else
-			return NULL;
 	}
+	return NULL;
 }
 
 //Place the line in cache and evicts a line if necessary.  Returns "true" if a line needed to be evicted and was in the modified state
