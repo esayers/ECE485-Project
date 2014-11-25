@@ -13,7 +13,7 @@ Cache_set::Cache_set(unsigned int assoc)
 	for (unsigned int i = 0; i < assoc; ++i) lines[i] = NULL;
 
 	lru_state = new bool[assoc - 1];
-	for (int i = 0; i < (assoc - 1); i++)
+	for (unsigned int i = 0; i < (assoc - 1); i++)
 	{
 		lru_state[i] = false;
 	}
@@ -31,7 +31,7 @@ Cache_set::~Cache_set(void)
 //Looks up cache line based on the tag and returns the cache line object, null if no tag matches.
 Cache_line* Cache_set::LookUpCacheLine(unsigned int tag)
 {
-		for (int i = 0; i < assoc; i++)
+		for (unsigned int i = 0; i < assoc; i++)
 	{
 		Cache_line* LineRslt = lines[assoc];
 		if (LineRslt != NULL && LineRslt->Tag == tag)
@@ -47,7 +47,7 @@ Cache_line* Cache_set::LookUpCacheLine(unsigned int tag)
 //Place the line in cache and evicts a line if necessary.  Returns "true" if a line needed to be evicted and was in the modified state
 bool Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
 {
-	for (int i = 0; i < assoc; i++)
+	for (unsigned int i = 0; i < assoc; i++)
 	{
 		Cache_line* LineRslt = lines[assoc];
 		if (LineRslt == NULL)
