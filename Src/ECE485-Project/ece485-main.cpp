@@ -37,14 +37,24 @@ int main(int argc, char *argv[])
 
 			switch (traceOp)
 			{
+
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				MainCacheController.PerformCacheOp(traceOp, address);
+				break;
 			case 8:
 				MainCacheController.ClearCache();
 				break;
 			case 9:
 				MainCacheController.PrintStats();
 				break;
+			// Invalid Operation
 			default:
-				MainCacheController.PerformCacheOp(traceOp, address);
 				break;
 			}
 
