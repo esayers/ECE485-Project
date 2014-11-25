@@ -246,6 +246,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 		switch (ModRslt)
 		{
 		case 0:
+		default:
 			return NOHIT;
 			break;
 		case 1:
