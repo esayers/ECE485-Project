@@ -135,11 +135,11 @@ int Cache_set::FindEvictLineInLru(int startRange, int endRange)
 		//Note that we flipped the bit above, so we need to make sure to go to the 
 		//opposite side
 		if (!lru_state[LruMidpoint])
-			FindEvictLineInLru(startRange + LruMidpoint + 1, endRange);
+			return FindEvictLineInLru(startRange + LruMidpoint + 1, endRange);
 
 		//else, call this function again, but restrict the range to the left half.
 		else
-			FindEvictLineInLru(startRange, endRange - (LruMidpoint + 1));
+			return FindEvictLineInLru(startRange, endRange - (LruMidpoint + 1));
 
 	}
 }
