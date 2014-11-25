@@ -6,10 +6,8 @@ int AddressUtils::GetByteSelect(int byteSelectLength, unsigned int address)
 	//Start out with a mask filled with 1s
 	unsigned int mask = ~0;
 	//shift the bits to the left for the appropriate amount of times, filling the space with 0s
-	for (int i = 0; i < byteSelectLength; i++)
-	{
-		mask = mask << 1;
-	}
+
+		mask = mask << byteSelectLength;
 
 	//do an AND operation with the complement of the mask, so the 0s are 1s and the 1s are 0s, blocking
 	//any of the higher order bits and allowing the byte select bits to come through
@@ -26,8 +24,7 @@ int AddressUtils::GetIndex(int tagLength, int byteSelectLength, unsigned int add
 	unsigned int mask = ~0;
 
 	//shift the bits to the left for the appropriate amount of times, filling the spaces with 0s
-	for (int i = 0; i < (32 - tagLength - byteSelectLength); i++)
-		mask = mask << 1;
+		mask = mask << (32 - tagLength - byteSelectLength);
 
 	//do an AND operation with the complement of the mask, so the 0s are 1s and the 1s are 0s, blocking
 	//any of the higher order bits and allowing the index bits to come through
