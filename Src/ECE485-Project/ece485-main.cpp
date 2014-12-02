@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 	//Array sizes
 	int associativity = 16;
 	int lineSizeBytes = 64;
-	int totalSizeBytes = 16777216;
-	//int totalSizeBytes = 8388608;
+	//int totalSizeBytes = 16777216;
+	int totalSizeBytes = 8388608;
 
 	
 	//initialize arrays

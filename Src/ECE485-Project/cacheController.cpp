@@ -48,7 +48,7 @@ void CacheController::PrintStats()
 {
 	printf("Cache Hits: %d\n", MainCache->CacheHits);
 	printf("Cache Misses: %d\n", MainCache->CacheMisses);
-	printf("Cache Hit/Miss Ratio: %4.2f", (MainCache->CacheHits / (MainCache->CacheHits + MainCache->CacheMisses))*100);
+	printf("Cache Hit/Miss Ratio: %4.2f\n", (MainCache->CacheHits / (MainCache->CacheHits + MainCache->CacheMisses))*100);
 	printf("Cache Reads: %d\n", MainCache->CacheReads);
 	printf("Cache Writes: %d\n", MainCache->CacheWrites);
 
@@ -302,6 +302,6 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	void CacheController::MessageToL2Cache(busOperationType busOp, unsigned int address)
 	{
 #ifndef SILENT
-		printf("MessageToL2Cache: BusOp: %d, Address: %#o", busOp, address);
+		printf("MessageToL2Cache: BusOp: %d, Address: %#o\n", busOp, address);
 #endif
 	}

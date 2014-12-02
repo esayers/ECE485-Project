@@ -86,7 +86,7 @@ bool Cache::PlaceLineInCache(unsigned int address, Mesif_state mesifStatus)
 		sets[CacheIndex] = SetRslt;
 	}
 
-	return SetRslt->placeLineInCache(address, mesifStatus);
+	return SetRslt->placeLineInCache(AddressUtils::GetTag(TagLength, address), mesifStatus);
 
 	
 }
