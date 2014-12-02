@@ -21,8 +21,8 @@ Cache::Cache(unsigned int total_size, unsigned int line_size, unsigned int assoc
 	ByteSelectLength = (int)(log10(line_size) / log10(2));
 	
 	TagLength = (int)(32 - (log10(total_size / assoc) / log10(2)));
-	IndexLength = TagLength - ByteSelectLength;
-	assoc = assoc;
+	IndexLength = 32 - TagLength - ByteSelectLength;
+	this->assoc = assoc;
 	num_sets = (1 << IndexLength);
 	sets = new Cache_set *[num_sets];
 	for (unsigned int i = 0; i < num_sets; ++i) sets[i] = NULL;
@@ -37,7 +37,9 @@ Cache::Cache(unsigned int total_size, unsigned int line_size, unsigned int assoc
 // Destructor for cache
 Cache::~Cache()
 {
-	for (unsigned int i = 0; i < num_sets; ++i) delete sets[i];
+	for (unsigned int i = 0; i < num_sets; ++i) 
+		if (sets[i] != NULL)
+			delete sets[i];
 	delete[] sets;
 }
 
@@ -45,14 +47,14 @@ Cache::~Cache()
 Cache_line* Cache::LookupCacheLine(unsigned int address)
 {
 	CacheReads++;
-	Cache_set RsltSet = *sets[AddressUtils::GetIndex(TagLength, IndexLength, address)];
+	Cache_set* RsltSet = sets[AddressUtils::GetIndex(TagLength, IndexLength, address)];
 
 	Cache_line *RsltLine = NULL;
-	if (&RsltSet == NULL)
+	if (RsltSet == NULL)
 		CacheMisses++;
 	else
 	{
-		RsltLine = RsltSet.LookUpCacheLine(AddressUtils::GetTag(TagLength, address));
+		RsltLine = RsltSet->LookUpCacheLine(AddressUtils::GetTag(TagLength, address));
 		if (RsltLine == NULL)
 			CacheMisses++;
 		else

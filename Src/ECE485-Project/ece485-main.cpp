@@ -10,16 +10,17 @@ int main(int argc, char *argv[])
 	//Array sizes
 	int associativity = 16;
 	int lineSizeBytes = 64;
-	int totalSizeBytes = 8388608;
+	int totalSizeBytes = 16777216;
+	//int totalSizeBytes = 8388608;
 
 	
 	//initialize arrays
-	CacheController MainCacheController(associativity, lineSizeBytes, totalSizeBytes);
+	CacheController MainCacheController(associativity, totalSizeBytes, lineSizeBytes);
 
 	//Open trace file and read a line
 	
 
-	ifstream traceFile("Tracefile.tc");
+	ifstream traceFile("C:\\Traces\\cc1.din");
 	if (traceFile.is_open())
 	{
 		
@@ -30,8 +31,10 @@ int main(int argc, char *argv[])
 		{
 			unsigned int address;
 			int traceOp;
-			stringstream(line.substr(1, 1)) >> traceOp;
-			stringstream(line.substr(3)) >> address;
+			string traceOpStr = line.substr(0, 1);
+			string addressStr = line.substr(2);
+			stringstream(traceOpStr) >> traceOp;
+			stringstream(addressStr) >> address;
 
 
 
@@ -51,7 +54,7 @@ int main(int argc, char *argv[])
 				MainCacheController.ClearCache();
 				break;
 			case 9:
-				MainCacheController.PrintStats();
+				MainCacheController.PrintCache();
 				break;
 			// Invalid Operation
 			default:

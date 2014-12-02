@@ -21,10 +21,11 @@ void CacheController::PerformCacheOp(int traceOp, unsigned int address)
 {
 	switch (traceOp)
 	{
-	case 1:
+	case 0:
+	case 2:
 		ReadRequestFromL1Cache(address);
 		break;
-	case 2:
+	case 1:
 		WriteRequestFromL1Cache(address);
 		break;
 	case 3:
@@ -45,7 +46,35 @@ void CacheController::PerformCacheOp(int traceOp, unsigned int address)
 //Prints the statistics of the cache
 void CacheController::PrintStats()
 {
+	printf("Cache Hits: %d\n", MainCache->CacheHits);
+	printf("Cache Misses: %d\n", MainCache->CacheMisses);
+	printf("Cache Hit/Miss Ratio: %4.2f", (MainCache->CacheHits / (MainCache->CacheHits + MainCache->CacheMisses))*100);
+	printf("Cache Reads: %d\n", MainCache->CacheReads);
+	printf("Cache Writes: %d\n", MainCache->CacheWrites);
 
+}
+
+void CacheController::PrintCache()
+{
+	printf("\n\nDumping the cache...\n\n");
+	
+	for (int i = 0; i < MainCache->num_sets; i++)
+	{
+		if (MainCache->sets[i] != NULL)
+		{
+			for (int j = 0; j < MainCache->assoc; j++)
+			{
+
+				if (MainCache->sets[i]->lines[j] != NULL)
+				{
+					printf("Set: %d		Line: %d	Tag: %#o		MESIF:%d\n", i, j, MainCache->sets[i]->lines[j]->Tag, MainCache->sets[i]->lines[j]->State);
+				}
+			}
+		}
+	}
+
+	printf("\n\n===========================================\n\n");
+	
 }
 
 //Clears the cache
@@ -61,7 +90,7 @@ void CacheController::ClearCache()
 	delete MainCache;
 
 	MainCache = new Cache(totalSizeBytes, lineSizeBytes, associativity);
-
+	
 }
 
 //Handles a read request from the L1 cache. 
@@ -75,13 +104,13 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 		if (ReadfromL2Cache(address,false))
 		{
 			if (MainCache->PlaceLineInCache(address, MESIF_FORWARD))
-				BusOperation(WRITE, address);
+				BusOperation(WRITE, address, GetSnoopResult(address));
 
 		}
 		else
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
 			{
-				BusOperation(WRITE, address);
+				BusOperation(WRITE, address, GetSnoopResult(address));
 			}
 
 	}
@@ -98,12 +127,12 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	{
 		ReadfromL2Cache(address, true);
 		if(MainCache->PlaceLineInCache(address, MESIF_MODIFIED))
-			BusOperation(WRITE,address);
+			BusOperation(WRITE, address, GetSnoopResult(address));
 
 	}
 	else
 	{
-		BusOperation(INVALIDATE, address);
+		BusOperation(INVALIDATE, address, GetSnoopResult(address));
 		LineRslt->State = MESIF_MODIFIED;
 	}
 
@@ -117,7 +146,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 
 		if (SnoopRslt == NOHIT)
 		{
-			BusOperation(Rwim?RWIM:READ, address);
+			BusOperation(Rwim?RWIM:READ, address,SnoopRslt);
 			return false;
 		}
 
@@ -170,7 +199,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			break;
 			case MESIF_MODIFIED:
 			{
-				BusOperation(WRITE, address);
+				BusOperation(WRITE, address, GetSnoopResult(address));
 				PutSnoopResult(HITM, address);
 				lineRslt->State = MESIF_SHARED;
 				
@@ -221,7 +250,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 				break;
 			case MESIF_MODIFIED:
 			{
-				BusOperation(WRITE, address);
+				BusOperation(WRITE, address, GetSnoopResult(address));
 				PutSnoopResult(HITM, address);
 				lineRslt->State = MESIF_INVALID;
 			}
@@ -258,15 +287,21 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 		}
 	}
 
-	void CacheController::BusOperation(busOperationType busOp, unsigned int address)
+	void CacheController::BusOperation(busOperationType busOp, unsigned int address, snoopOperationType SnoopResult)
 	{
-
+#ifndef SILENT
+			printf("BusOp: %d, Address: %#o, Snoop Result: %d\n",busOp,address, SnoopResult);
+#endif
 	}
 	void CacheController::PutSnoopResult(snoopOperationType busOp, unsigned int address)
 	{
-
+#ifndef SILENT
+			printf("SnoopResult: Address: %#o, SnoopResult: %d\n", address, busOp);
+#endif
 	}
 	void CacheController::MessageToL2Cache(busOperationType busOp, unsigned int address)
 	{
-
+#ifndef SILENT
+		printf("MessageToL2Cache: BusOp: %d, Address: %#o", busOp, address);
+#endif
 	}

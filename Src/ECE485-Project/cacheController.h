@@ -12,6 +12,7 @@ public:
 
 	void PerformCacheOp(int, unsigned int);
 	void PrintStats();
+	void PrintCache();
 	void ClearCache();
 	
 private:
@@ -25,7 +26,7 @@ private:
 
 	//Required functions
 	snoopOperationType GetSnoopResult(unsigned int);
-	void BusOperation(busOperationType, unsigned int);
+	void BusOperation(busOperationType, unsigned int, snoopOperationType);
 	void PutSnoopResult(snoopOperationType, unsigned int);
 	void MessageToL2Cache(busOperationType, unsigned int);
 };

@@ -33,7 +33,7 @@ Cache_line* Cache_set::LookUpCacheLine(unsigned int tag)
 {
 	for (unsigned int i = 0; i < assoc; i++)
 	{
-		Cache_line* LineRslt = lines[assoc];
+		Cache_line* LineRslt = lines[i];
 		if (LineRslt != NULL && LineRslt->Tag == tag)
 		{
 			UpdateLru(i, 0, assoc-2);
@@ -48,16 +48,18 @@ bool Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
 {
 	for (unsigned int i = 0; i < assoc; i++)
 	{
-		Cache_line* LineRslt = lines[assoc];
+		Cache_line* LineRslt = lines[i];
 		if (LineRslt == NULL)
 		{
-			lines[assoc] = new Cache_line(tag, mesifStatus);
+			lines[i] = new Cache_line(tag, mesifStatus);
+			UpdateLru(i, 0, assoc - 2);
 			return false;
 		}
 		else if (LineRslt->State == MESIF_INVALID)
 		{
-			delete lines[assoc];
-			lines[assoc] = new Cache_line(tag, mesifStatus);
+			delete lines[i];
+			lines[i] = new Cache_line(tag, mesifStatus);
+			UpdateLru(i, 0, assoc - 2);
 			return false;
 		}
 		
@@ -81,27 +83,28 @@ void Cache_set::UpdateLru(int lineIndex, int startRange, int endRange)
 	if ((endRange - startRange) == 0)
 	{
 		//If the lineIndex is odd, we want to put a 1, if not, a 0
-		lru_state[endRange] = (lineIndex % 2) == 1;
+		lru_state[endRange] = (lineIndex % 2) == 0;
 		return;
 	}
 	else
 	{
-		
-		int LruMidpoint = ((endRange - startRange)) / 2 + startRange;
+		int DistToMidpoint = (endRange - startRange) / 2;
+		int LruMidpoint = DistToMidpoint + startRange;
+
 
 		//If the line index is greater than the midpoint, we want to point the LRU
 		//to the opposite side, which is left, if it is less than the midpoint, we want
 		//to point it to the right side
-		lru_state[LruMidpoint] = !(lineIndex > (LruMidpoint + 1));
+		lru_state[LruMidpoint] = !(lineIndex > (LruMidpoint));
 		
 		//if the address is on the right side, recursively call this function, except
 		//restrict the range to right half
 		if (!lru_state[LruMidpoint])
-			UpdateLru(lineIndex, startRange + LruMidpoint + 1, endRange);
+			UpdateLru(lineIndex, startRange + DistToMidpoint + 1, endRange);
 
 		//else, call this function again, but restrict the range to the left half.
 		else
-			UpdateLru(lineIndex, startRange, endRange - (LruMidpoint + 1));
+			UpdateLru(lineIndex, startRange, endRange - (DistToMidpoint + 1));
 
 	}
 }
@@ -117,15 +120,15 @@ int Cache_set::FindEvictLineInLru(int startRange, int endRange)
 		lru_state[endRange] = !lru_state[endRange];
 
 
-		//if the lru state is false, then we need to subtract one, else, we 
+		//if the lru state is false, then we need to add one, else, we 
 		//can return the index. Note that we flipped the bit above, so we need
 		//to reverse the ternary logic.
-		return endRange - (lru_state[endRange]==false)?0:1;
+		return endRange + (lru_state[endRange]==false)?0:1;
 	}
 	else
 	{
-
-		int LruMidpoint = ((endRange - startRange)) / 2 + startRange;
+		int DistToMidpoint = (endRange - startRange) / 2;
+		int LruMidpoint = DistToMidpoint + startRange;
 
 		//Flip the LRU bit at the midpoint
 		lru_state[LruMidpoint] = !lru_state[LruMidpoint];
@@ -135,11 +138,11 @@ int Cache_set::FindEvictLineInLru(int startRange, int endRange)
 		//Note that we flipped the bit above, so we need to make sure to go to the 
 		//opposite side
 		if (!lru_state[LruMidpoint])
-			return FindEvictLineInLru(startRange + LruMidpoint + 1, endRange);
+			return FindEvictLineInLru(startRange + DistToMidpoint + 1, endRange);
 
 		//else, call this function again, but restrict the range to the left half.
 		else
-			return FindEvictLineInLru(startRange, endRange - (LruMidpoint + 1));
+			return FindEvictLineInLru(startRange, endRange - (DistToMidpoint + 1));
 
 	}
 }
