@@ -91,6 +91,12 @@
     <ClInclude Include="cacheSet.h" />
     <ClInclude Include="ece485-cache.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="TestFileList.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Trace1.tc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
