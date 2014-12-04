@@ -73,13 +73,14 @@ int main(int argc, char *argv[])
 	ifstream testFilePaths("C:\\Traces\\TestFileList.txt");
 	if (testFilePaths.is_open())
 	{
-
+		
 		std::string line;
 
 
 		while (getline(testFilePaths, line))
 		{
-			
+			cout << "Running file: " << line;
+			cout << "\n";
 			RunTestFile(line, &MainCacheController);
 
 

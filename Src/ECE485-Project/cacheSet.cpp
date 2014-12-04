@@ -67,9 +67,10 @@ bool Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
 
 	//If it looped through all the lines and none of them were invalid or empty, then we need to evict a line
 	int IndexToEvict = FindEvictLineInLru(0, assoc-2);
+	int OrigMesifStatus = lines[IndexToEvict]->State;
 	lines[IndexToEvict]->State = mesifStatus;
 	lines[IndexToEvict]->Tag = tag;
-	return true;
+	return OrigMesifStatus == MESIF_MODIFIED;
 
 
 
@@ -123,7 +124,7 @@ int Cache_set::FindEvictLineInLru(int startRange, int endRange)
 		//if the lru state is false, then we need to add one, else, we 
 		//can return the index. Note that we flipped the bit above, so we need
 		//to reverse the ternary logic.
-		return endRange + (lru_state[endRange]==true)?0:1;
+		return endRange + (lru_state[endRange]==false)?0:1;
 	}
 	else
 	{

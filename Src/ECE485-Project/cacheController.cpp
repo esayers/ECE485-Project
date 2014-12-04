@@ -46,9 +46,13 @@ void CacheController::PerformCacheOp(int traceOp, unsigned int address)
 //Prints the statistics of the cache
 void CacheController::PrintStats()
 {
+	float TotalCache = MainCache->CacheHits + MainCache->CacheMisses;
+	float Ratio = (((float)MainCache->CacheHits)/(TotalCache)) * 100;
 	printf("Cache Hits: %d\n", MainCache->CacheHits);
 	printf("Cache Misses: %d\n", MainCache->CacheMisses);
-	printf("Cache Hit/Miss Ratio: %4.2f\n", (MainCache->CacheHits / (MainCache->CacheHits + MainCache->CacheMisses))*100);
+	
+
+	cout << "Cache Hit/Miss Ratio: " << Ratio << "%\n";
 	printf("Cache Reads: %d\n", MainCache->CacheReads);
 	printf("Cache Writes: %d\n", MainCache->CacheWrites);
 
