@@ -46,23 +46,27 @@ void CacheController::PerformCacheOp(int traceOp, unsigned int address)
 //Prints the statistics of the cache
 void CacheController::PrintStats()
 {
-	printf("Cache Hits: %d\n", MainCache->CacheHits);
-	printf("Cache Misses: %d\n", MainCache->CacheMisses);
-	printf("Cache Hit/Miss Ratio: %4.2f\n", (MainCache->CacheHits / (MainCache->CacheHits + MainCache->CacheMisses))*100);
-	printf("Cache Reads: %d\n", MainCache->CacheReads);
-	printf("Cache Writes: %d\n", MainCache->CacheWrites);
-
+	int hits = MainCache->CacheHits;
+	int misses = MainCache->CacheMisses;
+	int reads = MainCache->CacheReads;
+	int writes = MainCache->CacheReads;
+	printf("Cache Hits: %d\n", hits);
+	printf("Cache Misses: %d\n", misses);
+	if (hits + misses)
+		printf("Cache Hit Ratio: %.2f%%\n", ((float) hits * 100) / ((float) (hits + misses)));
+	printf("Cache Reads: %d\n",  reads);
+	printf("Cache Writes: %d\n", writes);
 }
 
 void CacheController::PrintCache()
 {
 	printf("\n\nDumping the cache...\n\n");
 	
-	for (int i = 0; i < MainCache->num_sets; i++)
+	for (unsigned int i = 0; i < MainCache->num_sets; i++)
 	{
 		if (MainCache->sets[i] != NULL)
 		{
-			for (int j = 0; j < MainCache->assoc; j++)
+			for (unsigned int j = 0; j < MainCache->assoc; j++)
 			{
 
 				if (MainCache->sets[i]->lines[j] != NULL)

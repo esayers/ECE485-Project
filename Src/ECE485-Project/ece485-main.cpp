@@ -19,16 +19,22 @@ void RunTestFile(string testFile, CacheController* mainController)
 		while (getline(traceFile, line))
 		{
 			unsigned int address = 0;
-			int traceOp;
-			string traceOpStr = line.substr(0, 1);
-			string addressStr = line.substr(2);
-			stringstream(traceOpStr) >> traceOp;
-			sscanf(addressStr.c_str(), "%x", &address);
+			int traceOp = -1;
 
+			if (line.length() >= 3)
+			{
+				string traceOpStr = line.substr(0, 1);
+				string addressStr = line.substr(2);
+				traceOp = stoi(traceOpStr, nullptr, 10); // Convert trace to integer
+				address = stoi(addressStr, nullptr, 16); // Convert address to integer, treating as hex
+			}
+			else if (line.length() >= 1)
+			{
+				string traceOpStr = line.substr(0, 1);
+				traceOp = stoi(traceOpStr, nullptr, 10); // Convert trace to integer
+			}
 
-
-
-			switch (traceOp)
+ 			switch (traceOp)
 			{
 
 			case 0:
@@ -70,7 +76,7 @@ int main(int argc, char *argv[])
 	//initialize arrays
 	CacheController MainCacheController(associativity, totalSizeBytes, lineSizeBytes);
 
-	ifstream testFilePaths("C:\\Traces\\TestFileList.txt");
+	ifstream testFilePaths("TestFileList.txt");
 	if (testFilePaths.is_open())
 	{
 
@@ -93,6 +99,6 @@ int main(int argc, char *argv[])
 
 	//Print summary
 	MainCacheController.PrintStats();
-
+	system("pause");
 	return 0;
 }
