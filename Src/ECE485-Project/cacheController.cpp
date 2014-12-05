@@ -64,14 +64,29 @@ void CacheController::PrintCache()
 	
 	for (unsigned int i = 0; i < MainCache->num_sets; i++)
 	{
-		if (MainCache->sets[i] != NULL)
+		Cache_set* curSet = MainCache->sets[i];
+		if (curSet != NULL)
 		{
+			cout << "Set: 0x" << setw(5) << setfill('0') << hex << i << ", LRU Bits: ";
+			for (unsigned int j = 0; j < (MainCache->assoc - 1); ++j)
+			{
+				if (curSet->lru_state[j])
+					cout << "1";
+				else
+					cout << "0";
+			}
+			cout << endl;
+
 			for (unsigned int j = 0; j < MainCache->assoc; j++)
 			{
-
-				if (MainCache->sets[i]->lines[j] != NULL)
+				Cache_line* curLine = curSet->lines[j];
+				if (curLine != NULL)
 				{
-					printf("Set: %d		Line: %d	Tag: %#o		MESIF:%d\n", i, j, MainCache->sets[i]->lines[j]->Tag, MainCache->sets[i]->lines[j]->State);
+					//printf("Set: %d		Line: %d	Tag: %#o		MESIF:%d\n", i, j, MainCache->sets[i]->lines[j]->Tag, MainCache->sets[i]->lines[j]->State);
+					cout << "  Line: 0x" << setw(2) << setfill('0') << hex << j;
+					cout << ", Tag: 0x" << setw(8) << setfill('0') << hex << curLine->Tag;
+					cout << ", MESIF: " << curLine->State;
+					cout << endl;
 				}
 			}
 		}
@@ -301,7 +316,8 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	void CacheController::PutSnoopResult(snoopOperationType busOp, unsigned int address)
 	{
 #ifndef SILENT
-			printf("SnoopResult: Address: %#o, SnoopResult: %d\n", address, busOp);
+			//printf("SnoopResult: Address: %#o, SnoopResult: %d\n", address, busOp);
+		cout << "SnoopResult: Address: " << hex << address << "Snoop Result: " << busOp << endl;
 #endif
 	}
 	void CacheController::MessageToL2Cache(busOperationType busOp, unsigned int address)
