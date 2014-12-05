@@ -294,7 +294,8 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	void CacheController::BusOperation(busOperationType busOp, unsigned int address, snoopOperationType SnoopResult)
 	{
 #ifndef SILENT
-			printf("BusOp: %d, Address: %#o, Snoop Result: %d\n",busOp,address, SnoopResult);
+			//printf("BusOp: %d, Address: %#o, Snoop Result: %d\n",busOp,address, SnoopResult);
+		cout << "BusOp: " << busOp << ", Address: 0x" << hex << address << ", Snoop Result: " << SnoopResult << endl;
 #endif
 	}
 	void CacheController::PutSnoopResult(snoopOperationType busOp, unsigned int address)
