@@ -60,14 +60,15 @@ void CacheController::PrintStats()
 
 void CacheController::PrintCache()
 {
-	printf("\n\nDumping the cache...\n\n");
-	
+	cout << endl;
+	cout << "  Cache Contents" << endl;
+	cout << "===========================================" << endl;
 	for (unsigned int i = 0; i < MainCache->num_sets; i++)
 	{
 		Cache_set* curSet = MainCache->sets[i];
 		if (curSet != NULL)
 		{
-			cout << "Set: 0x" << setw(5) << setfill('0') << hex << i << ", LRU Bits: ";
+			cout << "  Set: 0x" << setw(5) << setfill('0') << hex << i << ", LRU Bits: ";
 			for (unsigned int j = 0; j < (MainCache->assoc - 1); ++j)
 			{
 				if (curSet->lru_state[j])
@@ -82,18 +83,16 @@ void CacheController::PrintCache()
 				Cache_line* curLine = curSet->lines[j];
 				if (curLine != NULL)
 				{
-					//printf("Set: %d		Line: %d	Tag: %#o		MESIF:%d\n", i, j, MainCache->sets[i]->lines[j]->Tag, MainCache->sets[i]->lines[j]->State);
-					cout << "  Line: 0x" << setw(2) << setfill('0') << hex << j;
+					cout << "    Line: 0x" << setw(2) << setfill('0') << hex << j;
 					cout << ", Tag: 0x" << setw(8) << setfill('0') << hex << curLine->Tag;
 					cout << ", MESIF: " << curLine->State;
 					cout << endl;
 				}
 			}
+		cout << endl;
 		}
 	}
-
-	printf("\n\n===========================================\n\n");
-	
+	cout << "===========================================" << endl << endl;
 }
 
 //Clears the cache

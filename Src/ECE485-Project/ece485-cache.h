@@ -18,7 +18,7 @@ class Cache;
 //				n where 2^n = Associativity
 class Cache {
 
-	 unsigned int total_size;	// Total size of cache in bytes
+	unsigned int total_size;	// Total size of cache in bytes
 	unsigned int assoc;			// Set associativity
 	unsigned int num_sets;		// Number of sets in cache
 	int LineSizeBytes;
