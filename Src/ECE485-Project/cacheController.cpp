@@ -65,10 +65,12 @@ void CacheController::PrintCache()
 	cout << "===========================================" << endl;
 	for (unsigned int i = 0; i < MainCache->num_sets; i++)
 	{
-		Cache_set* curSet = MainCache->sets[i];
+		Cache_set* curSet = MainCache->sets[i]; // Set at index i
 		if (curSet != NULL)
 		{
 			cout << "  Set: 0x" << setw(5) << setfill('0') << hex << i << ", LRU Bits: ";
+
+			// For each bool in array print a one or zero
 			for (unsigned int j = 0; j < (MainCache->assoc - 1); ++j)
 			{
 				if (curSet->lru_state[j])
@@ -80,7 +82,7 @@ void CacheController::PrintCache()
 
 			for (unsigned int j = 0; j < MainCache->assoc; j++)
 			{
-				Cache_line* curLine = curSet->lines[j];
+				Cache_line* curLine = curSet->lines[j]; // Line at index j
 				if (curLine != NULL)
 				{
 					cout << "    Line: 0x" << setw(2) << setfill('0') << hex << j;
