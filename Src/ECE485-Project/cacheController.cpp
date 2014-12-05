@@ -121,18 +121,26 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 	//If no line was returned, or if the line was returned and is marked invalid, read from the higher cache
 	if (CacheRslt == NULL || (CacheRslt != NULL && CacheRslt->State == MESIF_INVALID))
 	{
-		if (ReadfromL2Cache(address,false))
+		
+		
+			
+		if (ReadfromL2Cache(address, false))
 		{
-			if (MainCache->PlaceLineInCache(address, MESIF_FORWARD))
+			bool EvictLine = MainCache->PlaceLineInCache(address, MESIF_FORWARD);
+			if (EvictLine)
+			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
+			}
+			
 
 		}
 		else
+		{
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
 			}
-
+		}
 	}
 	
 }

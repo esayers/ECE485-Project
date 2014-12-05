@@ -1,1 +1,2 @@
-Trace1.tc
+LruTest.tc
+MesifStatus.tc
