@@ -1,3 +1,10 @@
+// ECE 485 Cache Project
+// Edward Sayers
+// Nathan Becker
+
+#ifndef CACHE_CONTROLLER_H
+#define CACHE_CONTROLLER_H
+
 #include "ece485-cache.h"
 #include <iomanip>
 
@@ -31,3 +38,5 @@ private:
 	void PutSnoopResult(snoopOperationType, unsigned int);
 	void MessageToL2Cache(busOperationType, unsigned int);
 };
+
+#endif

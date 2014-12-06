@@ -1,3 +1,10 @@
+// ECE 485 Cache Project
+// Edward Sayers
+// Nathan Becker
+
+#ifndef CACHE_LINE_H
+#define CACHE_LINE_H
+
 #include "CacheConstants.h"
 
 class Cache_line;
@@ -14,3 +21,5 @@ public:
 	friend class CacheController;
 
 };
+
+#endif

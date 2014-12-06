@@ -55,13 +55,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Trace1.tc">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="TestFileList.txt">
       <Filter>Resource Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LruTest.tc">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="MesifStatus.tc">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

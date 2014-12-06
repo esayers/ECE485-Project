@@ -1,3 +1,10 @@
+// ECE 485 Cache Project
+// Edward Sayers
+// Nathan Becker
+
+#ifndef CACHE_SET_H
+#define CACHE_SET_H
+
 #include "cacheLine.h"
 #include "AddressUtils.h"
 #include <iostream>
@@ -28,3 +35,5 @@ private:
 	int FindEvictLineInLru(int, int);
 
 };
+
+#endif
