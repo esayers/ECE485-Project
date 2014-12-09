@@ -130,6 +130,7 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			if (EvictLine)
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
+				MessageToL2Cache(WRITE, address);
 			}
 			
 
@@ -139,6 +140,7 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
+				MessageToL2Cache(WRITE, address);
 			}
 		}
 	}
