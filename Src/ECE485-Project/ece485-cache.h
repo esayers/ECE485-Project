@@ -2,6 +2,8 @@
 // Edward Sayers
 // Nathan Becker
 
+#ifndef ECE485_CACHE_H
+#define ECE485_CACHE_H
 
 #include <fstream>
 #include <string>
@@ -43,3 +45,5 @@ public:
 
 	friend class CacheController;
 };
+
+#endif

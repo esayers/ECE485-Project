@@ -1,3 +1,10 @@
+// ECE 485 Cache Project
+// Edward Sayers
+// Nathan Becker
+
+#ifndef CACHE_CONSTANTS_H
+#define CACHE_CONSTANTS_H
+
 /*
 *Bus Operation types
 */
@@ -36,3 +43,5 @@ enum snoopOperationType
 	/* Hit to modified line*/
 	HITM
 };
+
+#endif

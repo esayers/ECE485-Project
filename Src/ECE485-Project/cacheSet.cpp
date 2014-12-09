@@ -124,7 +124,7 @@ int Cache_set::FindEvictLineInLru(int startRange, int endRange)
 		//if the lru state is false, then we need to add one, else, we 
 		//can return the index. Note that we flipped the bit above, so we need
 		//to reverse the ternary logic.
-		return endRange + (lru_state[endRange]==false)?0:1;
+		return endRange + (lru_state[endRange]==false)?1:0;
 	}
 	else
 	{
