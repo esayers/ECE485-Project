@@ -87,7 +87,25 @@ void CacheController::PrintCache()
 				{
 					cout << "    Line: 0x" << setw(2) << setfill('0') << hex << j;
 					cout << ", Tag: 0x" << setw(8) << setfill('0') << hex << curLine->Tag;
-					cout << ", MESIF: " << curLine->State;
+					cout << ", MESIF: ";
+					switch (curLine->State)
+					{
+					case MESIF_EXCLUSIVE :
+						cout << "Exclusive";
+						break;
+					case MESIF_FORWARD:
+						cout << "Forward";
+						break;
+					case MESIF_INVALID:
+						cout << "Invalid";
+						break;
+					case MESIF_MODIFIED:
+						cout << "Modified";
+						break;
+					case MESIF_SHARED:
+						cout << "Shared";
+						break;
+					}
 					cout << endl;
 				}
 			}
@@ -130,7 +148,7 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			if (EvictLine)
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
-				MessageToL2Cache(WRITE, address);
+				MessageToL1Cache(WRITE, address);
 			}
 			
 
@@ -140,12 +158,12 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
-				MessageToL2Cache(WRITE, address);
+				MessageToL1Cache(WRITE, address);
 			}
 		}
 	}
 
-	MessageToL2Cache(READ, address);
+	MessageToL1Cache(READ, address);
 	
 }
 
@@ -197,7 +215,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			lineRslt->State = MESIF_INVALID;
 		}
 
-		MessageToL2Cache(WRITE, address);
+		MessageToL1Cache(WRITE, address);
 	}
 
 	void CacheController::SnoopRead(unsigned int address)
@@ -294,7 +312,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			}
 
 		}
-		MessageToL2Cache(WRITE, address);
+		MessageToL1Cache(WRITE, address);
 	}
 
 	//Required functions
@@ -366,9 +384,26 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 		cout << "SnoopResult: Address: " << hex << address << "Snoop Result: " << busOp << endl;
 #endif
 	}
-	void CacheController::MessageToL2Cache(busOperationType busOp, unsigned int address)
+	void CacheController::MessageToL1Cache(busOperationType busOp, unsigned int address)
 	{
 #ifndef SILENT
-		printf("MessageToL2Cache: BusOp: %d, Address: %#o\n", busOp, address);
+		cout << "To L1: BusOp: ";
+
+		switch (busOp)
+		{
+		case READ:
+			cout << "Read";
+			break;
+		case WRITE:
+			cout << "Write";
+			break;
+		case RWIM:
+			cout << "RWIM";
+			break;
+		case INVALIDATE:
+			cout << "Inval.";
+			break;
+		}
+		cout << ", Address: 0x" << hex << address << endl;
 #endif
 	}

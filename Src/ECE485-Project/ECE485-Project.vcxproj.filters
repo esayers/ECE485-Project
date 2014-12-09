@@ -60,10 +60,16 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LruTest.tc">
+    <None Include="MesifStatus.tc">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="MesifStatus.tc">
+    <None Include="LruTest1.tc">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="LruTest2.tc">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SizeTest.tc">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
