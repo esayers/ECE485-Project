@@ -50,12 +50,12 @@ void CacheController::PrintStats()
 	int misses = MainCache->CacheMisses;
 	int reads = MainCache->CacheReads;
 	int writes = MainCache->CacheReads;
-	printf("Cache Hits: %d\n", hits);
-	printf("Cache Misses: %d\n", misses);
+	cout << "Cache Hits : " << dec << hits << endl;
+	cout << "Cache Misses: " << misses << endl;
 	if (hits + misses)
-		printf("Cache Hit Ratio: %.2f%%\n", ((float) hits * 100) / ((float) (hits + misses)));
-	printf("Cache Reads: %d\n",  reads);
-	printf("Cache Writes: %d\n", writes);
+		cout << "Cache Hit Ratio: " << setprecision(2) << fixed << (hits * 100.0) / (hits + misses) << "%" << endl;
+	cout << "Cache Reads: " << reads << endl;
+	cout << "Cache Writes: " << writes << endl;
 }
 
 void CacheController::PrintCache()
@@ -319,7 +319,35 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	{
 #ifndef SILENT
 			//printf("BusOp: %d, Address: %#o, Snoop Result: %d\n",busOp,address, SnoopResult);
-		cout << "BusOp: " << busOp << ", Address: 0x" << hex << address << ", Snoop Result: " << SnoopResult << endl;
+		cout << "BusOp: ";
+		switch (busOp)
+		{
+		case READ:
+			cout << "Read";
+			break;
+		case WRITE:
+			cout << "Write";
+			break;
+		case RWIM:
+			cout << "RWIM";
+			break;
+		case INVALIDATE:
+			cout << "Inval.";
+			break;
+		}
+		cout << ", Address: 0x" << hex << address << ", Snoop Result: " ;
+		switch (SnoopResult)
+		{
+		case NOHIT:
+			cout << "No Hit" << endl;
+			break;
+		case HIT:
+			cout << "Hit" << endl;
+			break;
+		case HITM:
+			cout << "Hit Modified" << endl;
+			break;
+		}
 #endif
 	}
 	void CacheController::PutSnoopResult(snoopOperationType busOp, unsigned int address)
