@@ -176,8 +176,12 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	if (LineRslt == NULL)
 	{
 		ReadfromRam(address, true);
-		if(MainCache->PlaceLineInCache(address, MESIF_MODIFIED))
-			BusOperation(WRITE, address, GetSnoopResult(address));
+		int oldTag = MainCache->PlaceLineInCache(address, MESIF_MODIFIED);
+		if (oldTag != -1)
+		{
+			unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength)) | AddressUtils::GetIndex(MainCache->TagLength, MainCache->IndexLength, address);
+			BusOperation(WRITE, oldAddress, GetSnoopResult(oldAddress));
+		}
 
 	}
 	else
