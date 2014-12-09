@@ -320,6 +320,8 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 #ifndef SILENT
 			//printf("BusOp: %d, Address: %#o, Snoop Result: %d\n",busOp,address, SnoopResult);
 		cout << "BusOp: " << busOp << ", Address: 0x" << hex << address << ", Snoop Result: " << SnoopResult << endl;
+
+		MessageToL2Cache(busOp, address);
 #endif
 	}
 	void CacheController::PutSnoopResult(snoopOperationType busOp, unsigned int address)
