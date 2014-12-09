@@ -26,7 +26,7 @@ public:
 private:
 	void ReadRequestFromL1Cache(unsigned int);
 	void WriteRequestFromL1Cache(unsigned int);
-	bool ReadfromL2Cache(unsigned int, bool Rwim);
+	bool ReadfromRam(unsigned int, bool Rwim);
 	void SnoopInvalidate(unsigned int);
 	void SnoopRead(unsigned int);
 	void SnoopWrite(unsigned int);
