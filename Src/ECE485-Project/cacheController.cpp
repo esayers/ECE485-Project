@@ -124,12 +124,13 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 		
 		
 			
-		if (ReadfromL2Cache(address, false))
+		if (ReadfromRam(address, false))
 		{
 			bool EvictLine = MainCache->PlaceLineInCache(address, MESIF_FORWARD);
 			if (EvictLine)
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
+				MessageToL2Cache(WRITE, address);
 			}
 			
 
@@ -139,9 +140,12 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
+				MessageToL2Cache(WRITE, address);
 			}
 		}
 	}
+
+	MessageToL2Cache(READ, address);
 	
 }
 
@@ -153,7 +157,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 
 	if (LineRslt == NULL)
 	{
-		ReadfromL2Cache(address, true);
+		ReadfromRam(address, true);
 		if(MainCache->PlaceLineInCache(address, MESIF_MODIFIED))
 			BusOperation(WRITE, address, GetSnoopResult(address));
 
@@ -168,7 +172,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 }
 
 //Handles a read from the higher cache. Returns true if snoop was successful, false if not
-	bool CacheController::ReadfromL2Cache(unsigned int address, bool Rwim)
+	bool CacheController::ReadfromRam(unsigned int address, bool Rwim)
 	{
 		snoopOperationType SnoopRslt = GetSnoopResult(address);
 
@@ -193,6 +197,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			lineRslt->State = MESIF_INVALID;
 		}
 
+		MessageToL2Cache(WRITE, address);
 	}
 
 	void CacheController::SnoopRead(unsigned int address)
@@ -289,6 +294,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			}
 
 		}
+		MessageToL2Cache(WRITE, address);
 	}
 
 	//Required functions
@@ -348,7 +354,10 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			cout << "Hit Modified" << endl;
 			break;
 		}
+		
+	
 #endif
+		
 	}
 	void CacheController::PutSnoopResult(snoopOperationType busOp, unsigned int address)
 	{
