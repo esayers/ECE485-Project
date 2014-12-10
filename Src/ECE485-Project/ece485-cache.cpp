@@ -19,9 +19,10 @@ Cache::Cache(unsigned int total_size, unsigned int line_size, unsigned int assoc
 {
 	LineSizeBytes = line_size;
 	ByteSelectLength = (int)(log10(line_size) / log10(2));
-	
-	TagLength = (int)(32 - (log10(total_size / assoc) / log10(2)));
-	IndexLength = 32 - TagLength - ByteSelectLength;
+	IndexLength = (int)(log10(total_size / assoc) / log10(2)) - ByteSelectLength;
+	TagLength = 32 - ByteSelectLength - IndexLength;
+	//TagLength = (int)(32 - (log10(total_size / assoc) / log10(2)));
+	//IndexLength = 32 - TagLength - ByteSelectLength;
 	this->assoc = assoc;
 	num_sets = (1 << IndexLength);
 	sets = new Cache_set *[num_sets];
@@ -47,7 +48,7 @@ Cache::~Cache()
 Cache_line* Cache::LookupCacheLine(unsigned int address)
 {
 	CacheReads++;
-	Cache_set* RsltSet = sets[AddressUtils::GetIndex(TagLength, IndexLength, address)];
+	Cache_set* RsltSet = sets[AddressUtils::GetIndex(TagLength, ByteSelectLength, address)];
 
 	Cache_line *RsltLine = NULL;
 	if (RsltSet == NULL)
@@ -77,7 +78,7 @@ bool Cache::PlaceLineInCache(unsigned int address, Mesif_state mesifStatus)
 	
 	
 	CacheWrites++;
-	int CacheIndex = AddressUtils::GetIndex(TagLength, IndexLength, address);
+	int CacheIndex = AddressUtils::GetIndex(TagLength, ByteSelectLength, address);
 	Cache_set* SetRslt = sets[CacheIndex];
 
 	if (SetRslt == NULL)

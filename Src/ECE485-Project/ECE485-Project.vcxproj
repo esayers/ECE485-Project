@@ -95,8 +95,11 @@
     <Text Include="TestFileList.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LruTest.tc" />
+    <None Include="LruTest1.tc" />
+    <None Include="LruTest2.tc" />
+    <None Include="Mesif1.tc" />
     <None Include="MesifStatus.tc" />
+    <None Include="SizeTest.tc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

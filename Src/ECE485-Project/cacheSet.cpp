@@ -44,7 +44,7 @@ Cache_line* Cache_set::LookUpCacheLine(unsigned int tag)
 }
 
 //Place the line in cache and evicts a line if necessary.  Returns "true" if a line needed to be evicted and was in the modified state
-bool Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
+int Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
 {
 	for (unsigned int i = 0; i < assoc; i++)
 	{
@@ -53,27 +53,28 @@ bool Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
 		{
 			lines[i] = new Cache_line(tag, mesifStatus);
 			UpdateLru(i, 0, assoc - 2);
-			return false;
+			return -1;
 		}
 		else if (LineRslt->State == MESIF_INVALID)
 		{
 			delete lines[i];
 			lines[i] = new Cache_line(tag, mesifStatus);
 			UpdateLru(i, 0, assoc - 2);
-			return false;
+			return -1;
 		}
 		
 	}
 
 	//If it looped through all the lines and none of them were invalid or empty, then we need to evict a line
 	int IndexToEvict = FindEvictLineInLru(0, assoc-2);
+	int OrigTag = lines[IndexToEvict]->Tag;
 	int OrigMesifStatus = lines[IndexToEvict]->State;
 	lines[IndexToEvict]->State = mesifStatus;
 	lines[IndexToEvict]->Tag = tag;
-	return OrigMesifStatus == MESIF_MODIFIED;
-
-
-
+	if (OrigMesifStatus == MESIF_MODIFIED)
+		return OrigTag;
+	else
+		return -1;
 }
 
 //Update the LRU bits when doing a read in the cache
@@ -124,7 +125,7 @@ int Cache_set::FindEvictLineInLru(int startRange, int endRange)
 		//if the lru state is false, then we need to add one, else, we 
 		//can return the index. Note that we flipped the bit above, so we need
 		//to reverse the ternary logic.
-		return endRange + (lru_state[endRange]==false)?1:0;
+		return endRange + ((lru_state[endRange]==false)?1:0);
 	}
 	else
 	{

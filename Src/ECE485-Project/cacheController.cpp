@@ -87,7 +87,25 @@ void CacheController::PrintCache()
 				{
 					cout << "    Line: 0x" << setw(2) << setfill('0') << hex << j;
 					cout << ", Tag: 0x" << setw(8) << setfill('0') << hex << curLine->Tag;
-					cout << ", MESIF: " << curLine->State;
+					cout << ", MESIF: ";
+					switch (curLine->State)
+					{
+					case MESIF_EXCLUSIVE :
+						cout << "Exclusive";
+						break;
+					case MESIF_FORWARD:
+						cout << "Forward";
+						break;
+					case MESIF_INVALID:
+						cout << "Invalid";
+						break;
+					case MESIF_MODIFIED:
+						cout << "Modified";
+						break;
+					case MESIF_SHARED:
+						cout << "Shared";
+						break;
+					}
 					cout << endl;
 				}
 			}
@@ -130,7 +148,7 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			if (EvictLine)
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
-				MessageToL2Cache(WRITE, address);
+				MessageToL1Cache(WRITE, address);
 			}
 			
 
@@ -140,12 +158,12 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
 			{
 				BusOperation(WRITE, address, GetSnoopResult(address));
-				MessageToL2Cache(WRITE, address);
+				MessageToL1Cache(WRITE, address);
 			}
 		}
 	}
 
-	MessageToL2Cache(READ, address);
+	MessageToL1Cache(READ, address);
 	
 }
 
@@ -158,8 +176,12 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	if (LineRslt == NULL)
 	{
 		ReadfromRam(address, true);
-		if(MainCache->PlaceLineInCache(address, MESIF_MODIFIED))
-			BusOperation(WRITE, address, GetSnoopResult(address));
+		int oldTag = MainCache->PlaceLineInCache(address, MESIF_MODIFIED);
+		if (oldTag != -1)
+		{
+			unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength)) | AddressUtils::GetIndex(MainCache->TagLength, MainCache->IndexLength, address);
+			BusOperation(WRITE, oldAddress, GetSnoopResult(oldAddress));
+		}
 
 	}
 	else
@@ -171,7 +193,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 
 }
 
-//Handles a read from the higher cache. Returns true if snoop was successful, false if not
+//Handles a read from memory. Returns true if snoop was successful, false if not
 	bool CacheController::ReadfromRam(unsigned int address, bool Rwim)
 	{
 		snoopOperationType SnoopRslt = GetSnoopResult(address);
@@ -197,7 +219,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			lineRslt->State = MESIF_INVALID;
 		}
 
-		MessageToL2Cache(WRITE, address);
+		MessageToL1Cache(WRITE, address);
 	}
 
 	void CacheController::SnoopRead(unsigned int address)
@@ -253,10 +275,11 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	{
 		Cache_line* lineRslt = MainCache->LookupCacheLine(address);
 
-		if (&lineRslt != NULL)
+		lineRslt->State = MESIF_INVALID;
+/*		if (&lineRslt != NULL)
 		{
 			lineRslt->State = MESIF_SHARED;
-		}
+		}*/
 	}
 
 	void CacheController::SnoopRwo(unsigned int address)
@@ -294,7 +317,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			}
 
 		}
-		MessageToL2Cache(WRITE, address);
+		MessageToL1Cache(WRITE, address);
 	}
 
 	//Required functions
@@ -366,9 +389,26 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 		cout << "SnoopResult: Address: " << hex << address << "Snoop Result: " << busOp << endl;
 #endif
 	}
-	void CacheController::MessageToL2Cache(busOperationType busOp, unsigned int address)
+	void CacheController::MessageToL1Cache(busOperationType busOp, unsigned int address)
 	{
 #ifndef SILENT
-		printf("MessageToL2Cache: BusOp: %d, Address: %#o\n", busOp, address);
+		cout << "To L1: BusOp: ";
+
+		switch (busOp)
+		{
+		case READ:
+			cout << "Read";
+			break;
+		case WRITE:
+			cout << "Write";
+			break;
+		case RWIM:
+			cout << "RWIM";
+			break;
+		case INVALIDATE:
+			cout << "Inval.";
+			break;
+		}
+		cout << ", Address: 0x" << hex << address << endl;
 #endif
 	}

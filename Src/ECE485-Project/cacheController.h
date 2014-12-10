@@ -7,6 +7,7 @@
 
 #include "ece485-cache.h"
 #include <iomanip>
+#include <string>
 
 class CacheController
 {
@@ -36,7 +37,7 @@ private:
 	snoopOperationType GetSnoopResult(unsigned int);
 	void BusOperation(busOperationType, unsigned int, snoopOperationType);
 	void PutSnoopResult(snoopOperationType, unsigned int);
-	void MessageToL2Cache(busOperationType, unsigned int);
+	void MessageToL1Cache(busOperationType, unsigned int);
 };
 
 #endif
