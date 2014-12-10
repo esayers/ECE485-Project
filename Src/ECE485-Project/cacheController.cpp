@@ -149,7 +149,7 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			bool EvictLine = MainCache->PlaceLineInCache(address, MESIF_FORWARD, &oldTag);
 			if (EvictLine)
 			{
-				unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength) | address & ~(~0 << (MainCache->ByteSelectLength + MainCache->IndexLength)));
+				unsigned int oldAddress = (oldTag << AddressUtils::GetIndex(MainCache->TagLength, MainCache->IndexLength,address) << AddressUtils::GetByteSelect(MainCache->ByteSelectLength,address));
 				BusOperation(WRITE, oldAddress, GetSnoopResult(oldAddress));
 				MessageToL1Cache(INVALIDATE, oldAddress);
 			}
@@ -160,7 +160,7 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 		{
 			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE, &oldTag))
 			{
-				unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength) | address & ~(~0 << (MainCache->ByteSelectLength + MainCache->IndexLength)));
+				unsigned int oldAddress = (oldTag << AddressUtils::GetIndex(MainCache->TagLength, MainCache->IndexLength, address) << AddressUtils::GetByteSelect(MainCache->ByteSelectLength, address));
 				BusOperation(WRITE, oldAddress, GetSnoopResult(oldAddress));
 				MessageToL1Cache(INVALIDATE, oldAddress);
 			}
