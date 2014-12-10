@@ -44,7 +44,7 @@ Cache_line* Cache_set::LookUpCacheLine(unsigned int tag)
 }
 
 //Place the line in cache and evicts a line if necessary.  Returns "true" if a line needed to be evicted and was in the modified state
-int Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
+bool Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus, int *oldTag)
 {
 	for (unsigned int i = 0; i < assoc; i++)
 	{
@@ -53,28 +53,28 @@ int Cache_set::placeLineInCache(unsigned int tag, Mesif_state mesifStatus)
 		{
 			lines[i] = new Cache_line(tag, mesifStatus);
 			UpdateLru(i, 0, assoc - 2);
-			return -1;
+			return false;
 		}
 		else if (LineRslt->State == MESIF_INVALID)
 		{
 			delete lines[i];
 			lines[i] = new Cache_line(tag, mesifStatus);
 			UpdateLru(i, 0, assoc - 2);
-			return -1;
+			return false;
 		}
 		
 	}
 
 	//If it looped through all the lines and none of them were invalid or empty, then we need to evict a line
 	int IndexToEvict = FindEvictLineInLru(0, assoc-2);
-	int OrigTag = lines[IndexToEvict]->Tag;
+	*oldTag = lines[IndexToEvict]->Tag;
 	int OrigMesifStatus = lines[IndexToEvict]->State;
 	lines[IndexToEvict]->State = mesifStatus;
 	lines[IndexToEvict]->Tag = tag;
 	if (OrigMesifStatus == MESIF_MODIFIED)
-		return OrigTag;
+		return true;
 	else
-		return -1;
+		return false;
 }
 
 //Update the LRU bits when doing a read in the cache
