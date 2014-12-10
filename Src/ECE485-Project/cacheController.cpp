@@ -193,7 +193,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 
 }
 
-//Handles a read from the higher cache. Returns true if snoop was successful, false if not
+//Handles a read from memory. Returns true if snoop was successful, false if not
 	bool CacheController::ReadfromRam(unsigned int address, bool Rwim)
 	{
 		snoopOperationType SnoopRslt = GetSnoopResult(address);
@@ -275,10 +275,11 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 	{
 		Cache_line* lineRslt = MainCache->LookupCacheLine(address);
 
-		if (&lineRslt != NULL)
+		lineRslt->State = MESIF_INVALID;
+/*		if (&lineRslt != NULL)
 		{
 			lineRslt->State = MESIF_SHARED;
-		}
+		}*/
 	}
 
 	void CacheController::SnoopRwo(unsigned int address)

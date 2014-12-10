@@ -1,2 +1,1 @@
-LruTest.tc
-MesifStatus.tc
+Mesif1.tc

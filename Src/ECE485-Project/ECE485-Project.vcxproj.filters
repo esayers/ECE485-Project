@@ -72,5 +72,8 @@
     <None Include="SizeTest.tc">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Mesif1.tc">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
