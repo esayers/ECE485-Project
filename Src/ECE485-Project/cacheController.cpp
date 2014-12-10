@@ -135,6 +135,7 @@ void CacheController::ClearCache()
 void CacheController::ReadRequestFromL1Cache(unsigned int address)
 {
 	Cache_line* CacheRslt = MainCache->LookupCacheLine(address);
+	int oldTag;
 
 	//If no line was returned, or if the line was returned and is marked invalid, read from the higher cache
 	if (CacheRslt == NULL || (CacheRslt != NULL && CacheRslt->State == MESIF_INVALID))
@@ -144,21 +145,23 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 			
 		if (ReadfromRam(address, false))
 		{
-			bool EvictLine = MainCache->PlaceLineInCache(address, MESIF_FORWARD);
+			bool EvictLine = MainCache->PlaceLineInCache(address, MESIF_FORWARD, &oldTag);
 			if (EvictLine)
 			{
-				BusOperation(WRITE, address, GetSnoopResult(address));
-				MessageToL1Cache(WRITE, address);
+				unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength) | address & ~(~0 << (MainCache->ByteSelectLength + MainCache->IndexLength)));
+				BusOperation(WRITE, oldAddress, GetSnoopResult(oldAddress));
+				MessageToL1Cache(INVALIDATE, oldAddress);
 			}
 			
 
 		}
 		else
 		{
-			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE))
+			if (MainCache->PlaceLineInCache(address, MESIF_EXCLUSIVE, &oldTag))
 			{
-				BusOperation(WRITE, address, GetSnoopResult(address));
-				MessageToL1Cache(WRITE, address);
+				unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength) | address & ~(~0 << (MainCache->ByteSelectLength + MainCache->IndexLength)));
+				BusOperation(WRITE, oldAddress, GetSnoopResult(oldAddress));
+				MessageToL1Cache(INVALIDATE, oldAddress);
 			}
 		}
 	}
@@ -171,16 +174,18 @@ void CacheController::ReadRequestFromL1Cache(unsigned int address)
 void CacheController::WriteRequestFromL1Cache(unsigned int address)
 {
 	
+	int oldTag;
 	Cache_line* LineRslt = MainCache->LookupCacheLine(address);
+
 
 	if (LineRslt == NULL)
 	{
 		ReadfromRam(address, true);
-		int oldTag = MainCache->PlaceLineInCache(address, MESIF_MODIFIED);
-		if (oldTag != -1)
+		if (MainCache->PlaceLineInCache(address, MESIF_MODIFIED, &oldTag))
 		{
-			unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength)) | AddressUtils::GetIndex(MainCache->TagLength, MainCache->IndexLength, address);
+			unsigned int oldAddress = (oldTag << (MainCache->ByteSelectLength + MainCache->IndexLength) | address & ~(~0 << (MainCache->ByteSelectLength + MainCache->IndexLength)));
 			BusOperation(WRITE, oldAddress, GetSnoopResult(oldAddress));
+			MessageToL1Cache(INVALIDATE, oldAddress);
 		}
 
 	}
@@ -206,7 +211,6 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 
 		return true;
 
-	
 	}
 
 	//Handles a snooped invalidate command
@@ -217,9 +221,10 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 		if (lineRslt != NULL)
 		{
 			lineRslt->State = MESIF_INVALID;
+			MessageToL1Cache(INVALIDATE, address);
 		}
 
-		MessageToL1Cache(WRITE, address);
+		
 	}
 
 	void CacheController::SnoopRead(unsigned int address)
@@ -254,8 +259,8 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			break;
 			case MESIF_MODIFIED:
 			{
-				BusOperation(WRITE, address, GetSnoopResult(address));
 				PutSnoopResult(HITM, address);
+				BusOperation(WRITE, address, GetSnoopResult(address));
 				lineRslt->State = MESIF_SHARED;
 				
 			}
@@ -306,8 +311,8 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 				break;
 			case MESIF_MODIFIED:
 			{
-				BusOperation(WRITE, address, GetSnoopResult(address));
 				PutSnoopResult(HITM, address);
+				BusOperation(WRITE, address, GetSnoopResult(address));
 				lineRslt->State = MESIF_INVALID;
 			}
 				break;
@@ -317,7 +322,7 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 			}
 
 		}
-		MessageToL1Cache(WRITE, address);
+		MessageToL1Cache(INVALIDATE, address);
 	}
 
 	//Required functions

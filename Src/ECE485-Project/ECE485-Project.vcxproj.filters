@@ -75,5 +75,8 @@
     <None Include="Mesif1.tc">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Busop.tc">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

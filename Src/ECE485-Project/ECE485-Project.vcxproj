@@ -95,6 +95,7 @@
     <Text Include="TestFileList.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Busop.tc" />
     <None Include="LruTest1.tc" />
     <None Include="LruTest2.tc" />
     <None Include="Mesif1.tc" />

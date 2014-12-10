@@ -73,7 +73,7 @@ Cache_line* Cache::LookupCacheLine(unsigned int address)
 }
 
 //Place the line in cache and evicts a line if necessary.  Returns "true" if a line needed to be evicted and was in the modified state
-bool Cache::PlaceLineInCache(unsigned int address, Mesif_state mesifStatus)
+bool Cache::PlaceLineInCache(unsigned int address, Mesif_state mesifStatus, int *oldAddress)
 {
 	
 	
@@ -87,7 +87,7 @@ bool Cache::PlaceLineInCache(unsigned int address, Mesif_state mesifStatus)
 		sets[CacheIndex] = SetRslt;
 	}
 
-	return SetRslt->placeLineInCache(AddressUtils::GetTag(TagLength, address), mesifStatus);
+	return SetRslt->placeLineInCache(AddressUtils::GetTag(TagLength, address), mesifStatus, oldAddress);
 
 	
 }

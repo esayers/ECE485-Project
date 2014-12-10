@@ -41,7 +41,7 @@ public:
 
 	Cache_line* LookupCacheLine(unsigned int);
 
-	bool PlaceLineInCache(unsigned int, Mesif_state);
+	bool PlaceLineInCache(unsigned int, Mesif_state, int *);
 
 	friend class CacheController;
 };
