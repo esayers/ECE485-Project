@@ -21,6 +21,7 @@ Cache::Cache(unsigned int total_size, unsigned int line_size, unsigned int assoc
 	ByteSelectLength = (int)(log10(line_size) / log10(2));
 	IndexLength = (int)(log10(total_size / assoc) / log10(2)) - ByteSelectLength;
 	TagLength = 32 - ByteSelectLength - IndexLength;
+	this->total_size = total_size;
 	//TagLength = (int)(32 - (log10(total_size / assoc) / log10(2)));
 	//IndexLength = 32 - TagLength - ByteSelectLength;
 	this->assoc = assoc;

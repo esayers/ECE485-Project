@@ -121,7 +121,7 @@ void CacheController::ClearCache()
 {
 	int associativity;
 	int lineSizeBytes;
-	int totalSizeBytes;
+	unsigned int totalSizeBytes;
 
 	associativity = MainCache->assoc;
 	lineSizeBytes = MainCache->LineSizeBytes;
