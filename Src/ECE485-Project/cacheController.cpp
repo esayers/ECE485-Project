@@ -1,4 +1,5 @@
 #include "cacheController.h"
+#define SILENT
 using namespace std;
 
 CacheController::CacheController(int associativity, int totalSizeBytes, int lineSizeBytes)
@@ -276,15 +277,14 @@ void CacheController::WriteRequestFromL1Cache(unsigned int address)
 
 	//Handles a snooped write command - in this case, looks up the cache line and 
 	//sees if it exists, if so, it changes it to the "shared" state
-	void CacheController::SnoopWrite(unsigned int address )
+	void CacheController::SnoopWrite(unsigned int address)
 	{
 		Cache_line* lineRslt = MainCache->LookupCacheLine(address);
 
-		lineRslt->State = MESIF_INVALID;
-/*		if (&lineRslt != NULL)
+		if (lineRslt != NULL)
 		{
-			lineRslt->State = MESIF_SHARED;
-		}*/
+			lineRslt->State = MESIF_INVALID;
+		}
 	}
 
 	void CacheController::SnoopRwo(unsigned int address)

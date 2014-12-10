@@ -3,6 +3,7 @@
 // Nathan Becker
 
 #include "cacheController.h"
+#define SILENT
 
 using namespace std;
 
@@ -26,6 +27,7 @@ void RunTestFile(string testFile, CacheController* mainController)
 				string traceOpStr = line.substr(0, 1);
 				string addressStr = line.substr(2);
 				traceOp = stoi(traceOpStr, nullptr, 10); // Convert trace to integer
+				if (traceOp != 9 && traceOp != 8)
 				address = stoi(addressStr, nullptr, 16); // Convert address to integer, treating as hex
 			}
 			else if (line.length() >= 1)

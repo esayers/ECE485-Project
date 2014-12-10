@@ -93,9 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="TestFileList.txt" />
+    <Text Include="tests.clean.pc.txt" />
+    <Text Include="Text.tc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Busop.tc" />
+    <None Include="cc1.din" />
     <None Include="LruTest1.tc" />
     <None Include="LruTest2.tc" />
     <None Include="Mesif1.tc" />

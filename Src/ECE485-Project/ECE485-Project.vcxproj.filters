@@ -58,6 +58,12 @@
     <Text Include="TestFileList.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="Text.tc">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="tests.clean.pc.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="MesifStatus.tc">
@@ -76,6 +82,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Busop.tc">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cc1.din">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
