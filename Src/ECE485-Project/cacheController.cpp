@@ -1,5 +1,5 @@
 #include "cacheController.h"
-//#define SILENT
+#define SILENT
 using namespace std;
 
 CacheController::CacheController(int associativity, int totalSizeBytes, int lineSizeBytes)
@@ -50,7 +50,7 @@ void CacheController::PrintStats()
 	int hits = MainCache->CacheHits;
 	int misses = MainCache->CacheMisses;
 	int reads = MainCache->CacheReads;
-	int writes = MainCache->CacheReads;
+	int writes = MainCache->CacheWrites;
 	cout << "Cache Hits : " << dec << hits << endl;
 	cout << "Cache Misses: " << misses << endl;
 	if (hits + misses)
